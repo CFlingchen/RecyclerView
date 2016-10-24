@@ -39,6 +39,7 @@ import com.chad.library.adapter.base.animation.ScaleInAnimation;
 import com.chad.library.adapter.base.animation.SlideInBottomAnimation;
 import com.chad.library.adapter.base.animation.SlideInLeftAnimation;
 import com.chad.library.adapter.base.animation.SlideInRightAnimation;
+import com.chad.library.adapter.base.callback.BaseViewHolderCallback;
 import com.chad.library.adapter.base.entity.IExpandable;
 
 import java.lang.annotation.Retention;
@@ -471,6 +472,13 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
         return super.getItemViewType(position);
     }
 
+    private BaseViewHolderCallback mBaseViewHolderCallback;
+
+    public void setBaseViewHolderCallback(BaseViewHolderCallback baseViewHolderCallback) {
+        mBaseViewHolderCallback = baseViewHolderCallback;
+    }
+
+
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         BaseViewHolder baseViewHolder = null;
@@ -492,6 +500,8 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
             default:
                 baseViewHolder = onCreateDefViewHolder(parent, viewType);
         }
+        if (mBaseViewHolderCallback != null)
+            mBaseViewHolderCallback.onCreateBaseViewHolder(baseViewHolder.getConvertView());
         return baseViewHolder;
 
     }
@@ -662,7 +672,6 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
     }
 
     /**
-     *
      * @param header
      * @param index
      * @param orientation
@@ -853,7 +862,7 @@ public abstract class BaseQuickAdapter<T> extends RecyclerView.Adapter<RecyclerV
 
 
     /**
-     *  Finished pull to refresh on the load
+     * Finished pull to refresh on the load
      */
     public void loadComplete() {
         mNextLoadEnable = false;
